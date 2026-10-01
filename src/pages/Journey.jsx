@@ -1,6 +1,64 @@
+import { useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { Reveal, PageHero, Card, SectionHead } from '../components/UI.jsx'
+import { Reveal, PageHero, Card, SectionHead, useInViewOnce } from '../components/UI.jsx'
+import { useScrollProgress, useActiveIndex } from '../components/Motion.jsx'
 import { journeyStages, rules } from '../data/site.js'
+
+/* One stage. Marks itself "seen" the first time it enters the viewport, which is
+   what fires the node pop and the staggered screen tiles in CSS. */
+function Stage({ stage }) {
+  const [ref, seen] = useInViewOnce(0.25)
+  return (
+    <div ref={ref} className={'tl-stage' + (seen ? ' seen' : '')}>
+      <div className="tl-node">{stage.n}</div>
+      <div className="tl-head">
+        <b>{stage.stage}</b>
+        <span className="tl-agent">{stage.agent}</span>
+      </div>
+      <div className="tl-screens">
+        {stage.screens.map((sc, j) => (
+          <div key={sc.t} className={'scr ' + (sc.tone || '')} style={{ '--i': j }}>
+            <b>{sc.t}</b><span>{sc.d}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/* Three-phase flow map — inline SVG, ~1 KB, connectors drawn with animated
+   dashes. Scales to any width, no image request, no runtime. */
+function JourneyMap() {
+  const rows = [
+    { t: 'Before you enrol', d: 'Discover · Account · KYC' },
+    { t: 'Enrol & learn', d: 'Package · Payment · E-learning' },
+    { t: 'Complete & certify', d: 'Labs · Assessment · Certificate' }
+  ]
+  return (
+    <svg className="jmap" viewBox="0 0 900 152" role="img"
+      aria-label="The learner journey in three phases: before you enrol, enrol and learn, complete and certify">
+      <defs>
+        <linearGradient id="jmapGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stopColor="#0d5bd1" />
+          <stop offset="1" stopColor="#0d9488" />
+        </linearGradient>
+      </defs>
+      {rows.map((r, i) => (
+        <g key={r.t} transform={'translate(' + (20 + i * 293) + ',34)'}>
+          <rect width="274" height="84" rx="16" fill="#fff" stroke="#e6e8ee" />
+          <rect width="274" height="3" rx="1.5" fill="url(#jmapGrad)" />
+          <text x="20" y="34" fontSize="15" fontWeight="600" fill="#0f172a">{r.t}</text>
+          <text x="20" y="58" fontSize="12" fill="#667085">{r.d}</text>
+          <text x="20" y="76" fontSize="10.5" fontWeight="700" letterSpacing="1.2" fill="#0d5bd1">PHASE {i + 1}</text>
+        </g>
+      ))}
+      {[0, 1].map(i => (
+        <line key={i} className="flow" x1={294 + i * 293} y1="76" x2={313 + i * 293} y2="76"
+          stroke="#0d5bd1" strokeWidth="2" strokeLinecap="round" />
+      ))}
+    </svg>
+  )
+}
 
 // Seven stages read as a flat list. Grouping them into three phases gives the
 // page a spine: what happens before you enrol, while you learn, and at the end.
@@ -12,6 +70,9 @@ const phases = [
 
 export default function Journey() {
   const phaseOf = n => phases.find(p => n >= p.from && n <= p.to)
+  const tlRef = useRef(null)
+  useScrollProgress(tlRef)                        // writes --p on the timeline
+  const active = useActiveIndex(tlRef, '.tl-stage')
   return (
     <>
       <PageHero eyebrow="How it works" title="The learner journey, screen by screen"
@@ -22,15 +83,18 @@ export default function Journey() {
             <div className="stepper">
               {journeyStages.map((s, i) => (
                 <span key={s.n} style={{ display: 'contents' }}>
-                  <span className="dot"><i>{s.n}</i>{s.stage}</span>
-                  {i < journeyStages.length - 1 && <span className="sep" />}
+                  <span className={'dot' + (i === active ? ' on' : '')}><i>{s.n}</i>{s.stage}</span>
+                  {i < journeyStages.length - 1 && <span className={'sep' + (i < active ? ' on' : '')} />}
                 </span>
               ))}
             </div>
           </Reveal>
 
-          <div className="tl" style={{ marginTop: 34 }}>
-            {journeyStages.map((s, i) => {
+          <JourneyMap />
+
+          <div className="tl" ref={tlRef} style={{ marginTop: 30 }}>
+            <div className="head-dot" aria-hidden="true" />
+            {journeyStages.map((s) => {
               const ph = phaseOf(s.n)
               return (
                 <div key={s.n}>
@@ -42,22 +106,7 @@ export default function Journey() {
                       </div>
                     </Reveal>
                   )}
-                  <Reveal delay={i * 0.03}>
-                    <div className="tl-stage">
-                      <div className="tl-node">{s.n}</div>
-                      <div className="tl-head">
-                        <b>{s.stage}</b>
-                        <span className="tl-agent">{s.agent}</span>
-                      </div>
-                      <div className="tl-screens">
-                        {s.screens.map(sc => (
-                          <div key={sc.t} className={'scr ' + (sc.tone || '')}>
-                            <b>{sc.t}</b><span>{sc.d}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </Reveal>
+                  <Stage stage={s} />
                 </div>
               )
             })}

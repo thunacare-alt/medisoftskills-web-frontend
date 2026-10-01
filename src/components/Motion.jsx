@@ -2,6 +2,56 @@ import { useEffect, useRef, useState } from 'react'
 import { prefersReducedMotion, Reveal, useInViewOnce } from './UI.jsx'
 import { contact } from '../data/site.js'
 
+/* Scroll progress of an element, written into a CSS variable (0 → 1).
+   All the drawing then happens in CSS on the compositor — no React render per
+   scroll event. rAF-throttled, passive listeners, pinned to 1 for reduced motion. */
+export function useScrollProgress(ref, varName = '--p') {
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    if (prefersReducedMotion()) { el.style.setProperty(varName, '1'); return }
+    let raf = 0
+    const measure = () => {
+      raf = 0
+      const r = el.getBoundingClientRect()
+      const vh = window.innerHeight || 1
+      const travel = r.height + vh * 0.35
+      const p = Math.min(1, Math.max(0, (vh * 0.8 - r.top) / travel))
+      el.style.setProperty(varName, p.toFixed(4))
+    }
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(measure) }
+    measure()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+      if (raf) cancelAnimationFrame(raf)
+    }
+  }, [ref, varName])
+}
+
+/* Which stage currently sits under the middle of the viewport. Drives the
+   highlight on the sticky stepper. One observer, disconnected on unmount. */
+export function useActiveIndex(containerRef, selector) {
+  const [idx, setIdx] = useState(0)
+  useEffect(() => {
+    const root = containerRef.current
+    if (!root || typeof IntersectionObserver === 'undefined') return
+    const els = Array.from(root.querySelectorAll(selector))
+    if (!els.length) return
+    const io = new IntersectionObserver((entries) => {
+      const visible = entries.filter(e => e.isIntersecting)
+      if (!visible.length) return
+      visible.sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)
+      setIdx(els.indexOf(visible[0].target))
+    }, { rootMargin: '-38% 0px -48% 0px', threshold: 0 })
+    els.forEach(el => io.observe(el))
+    return () => io.disconnect()
+  }, [containerRef, selector])
+  return idx
+}
+
 /* Infinite horizontal marquee. CSS-driven (compositor only, no JS per frame).
    Pauses on hover, renders as a static wrapped list when reduced motion is requested. */
 export function Marquee({ items = [], duration = 30, className = '' }) {

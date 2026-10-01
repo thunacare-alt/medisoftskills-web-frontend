@@ -148,7 +148,7 @@ export default function Home() {
               </div>
               <div className="grid g2">
                 <Card className="flat"><div className="kpi">5</div><div className="sm muted">Packages, sequential</div></Card>
-                <Card className="flat"><div className="kpi">48</div><div className="sm muted">Total CPD hours</div></Card>
+                <Card className="flat"><div className="kpi">56</div><div className="sm muted">Total CPD hours</div></Card>
                 <Card className="flat"><div className="kpi">60</div><div className="sm muted">Days access per package</div></Card>
                 <Card className="flat"><div className="kpi">30</div><div className="sm muted">Day resubmission window</div></Card>
               </div>
