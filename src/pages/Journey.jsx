@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { Reveal, PageHero, Card, SectionHead, useInViewOnce } from '../components/UI.jsx'
+import { Reveal, PageHero, Card, SectionHead, useInViewOnce, prefersReducedMotion } from '../components/UI.jsx'
 import { useScrollProgress, useActiveIndex } from '../components/Motion.jsx'
 import { journeyStages, rules } from '../data/site.js'
 
@@ -68,6 +68,13 @@ const phases = [
   { from: 6, to: 7, t: 'Complete & certify', d: 'Practise in the skills labs, get assessed, download your certificate.' }
 ]
 
+/* Jump to a stage without it hiding under the sticky header. */
+function scrollToStage(n) {
+  const el = document.getElementById('stage-' + n)
+  if (!el) return
+  el.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' })
+}
+
 export default function Journey() {
   const phaseOf = n => phases.find(p => n >= p.from && n <= p.to)
   const tlRef = useRef(null)
@@ -80,14 +87,31 @@ export default function Journey() {
       <section className="section tight">
         <div className="container">
           <Reveal>
-            <div className="stepper">
-              {journeyStages.map((s, i) => (
-                <span key={s.n} style={{ display: 'contents' }}>
-                  <span className={'dot' + (i === active ? ' on' : '')}><i>{s.n}</i>{s.stage}</span>
-                  {i < journeyStages.length - 1 && <span className={'sep' + (i < active ? ' on' : '')} />}
-                </span>
+            <nav className="stepper" aria-label="Journey stages">
+              {phases.map((ph, pi) => (
+                <div className="sgroup" key={ph.t} style={{ '--c': ['#0d5bd1', '#0d9488', '#0f2a4a'][pi] }}>
+                  <div className="sgroup-head"><span className="sgroup-bar" />{ph.t}</div>
+                  <div className="sgroup-steps">
+                    {journeyStages.filter(s => s.n >= ph.from && s.n <= ph.to).map(s => {
+                      const i = s.n - 1
+                      const state = i === active ? 'current' : i < active ? 'done' : 'next'
+                      return (
+                        <button type="button" key={s.n} className={'sstep ' + state}
+                          aria-current={state === 'current' ? 'step' : undefined}
+                          onClick={() => scrollToStage(s.n)}>
+                          <i aria-hidden="true">{s.n}</i><b>{s.stage}</b>
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
               ))}
-            </div>
+              <div className="snow">
+                <span>Step {active + 1} of {journeyStages.length}</span>
+                <b>{journeyStages[active] && journeyStages[active].stage}</b>
+              </div>
+              <div className="sbar"><span /></div>
+            </nav>
           </Reveal>
 
           <JourneyMap />
@@ -97,7 +121,7 @@ export default function Journey() {
             {journeyStages.map((s) => {
               const ph = phaseOf(s.n)
               return (
-                <div key={s.n}>
+                <div key={s.n} id={'stage-' + s.n} className="tl-anchor">
                   {ph && s.n === ph.from && (
                     <Reveal>
                       <div className="phase">
