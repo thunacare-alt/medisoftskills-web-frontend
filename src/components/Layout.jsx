@@ -56,7 +56,7 @@ export default function Layout({ children }) {
         </div>
         <div className="container foot-bot">
           <span>© {new Date().getFullYear()} {brand.name} · {brand.site}</span>
-          <span>Certification route: MAcadMEd through the Academy of Medical Educators (AoME), UK</span>
+          <span>Awarded with the Royal College of Surgeons of Edinburgh (UK) and CPD Certification Service (UK) · MAcadMEd route via the Academy of Medical Educators (UK)</span>
         </div>
       </footer>
     </>

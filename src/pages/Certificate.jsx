@@ -8,6 +8,7 @@ const cert = {
   subjects: 'Lifelong Learning · Communication · Ethics · Professionalism · Leadership · Teamwork',
   awardFrom: ['Royal College of Surgeons of Edinburgh, UK', 'CPD Certification Service, UK'],
   hours: 16,
+  fullCertificate: 'Certificate in Medical Soft Skills',
   director: 'Dr Vijay Jeganath',
   directorRole: 'Course Director',
 }
@@ -123,6 +124,65 @@ export default function Certificate() {
                 and completion of all requirements within one year.
               </p>
             </Card>
+          </div>
+        </div>
+      </section>
+
+      <section className="section alt">
+        <div className="container">
+          <SectionHead eyebrow="Awarding bodies" title="Three UK bodies, three distinct roles." />
+          <div className="grid g3">
+            <Card className="card tint-brand">
+              <Badge tone="b1">CPD award</Badge>
+              <h3 style={{ marginTop: 12 }}>Royal College of Surgeons of Edinburgh</h3>
+              <p className="sm">
+                Named as a co-awarding body on the e-learning certificate, alongside the CPD Certification Service.
+              </p>
+            </Card>
+            <Card className="card tint-teal">
+              <Badge tone="b2">CPD hours</Badge>
+              <h3 style={{ marginTop: 12 }}>CPD Certification Service, UK</h3>
+              <p className="sm">
+                Certifies the CPD hours on the certificate — 16 for the e-learning course, up to 56 across the full
+                programme.
+              </p>
+            </Card>
+            <Card className="card tint-violet">
+              <Badge tone="b4">MAcadMEd</Badge>
+              <h3 style={{ marginTop: 12 }}>Academy of Medical Educators, UK</h3>
+              <p className="sm">
+                The MAcadMEd fast-track route. Requires the Certification Plus package with all requirements completed
+                within one year.
+              </p>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      <section className="section tight">
+        <div className="container">
+          <SectionHead eyebrow="Two certificates" title="Which certificate you receive depends on how far you go." />
+          <div className="grid g2">
+            <Reveal>
+              <Card className="card">
+                <Badge tone="b1">Stage one</Badge>
+                <h3 style={{ marginTop: 12 }}>{cert.course}</h3>
+                <p className="sm">
+                  Awarded on completion of the e-learning course — {cert.hours} CPD hours. This is the certificate
+                  reproduced above.
+                </p>
+              </Card>
+            </Reveal>
+            <Reveal delay={0.05}>
+              <Card className="card">
+                <Badge tone="b4">Full programme</Badge>
+                <h3 style={{ marginTop: 12 }}>{cert.fullCertificate}</h3>
+                <p className="sm">
+                  Awarded once all parts are complete — the e-learning courses, the practical courses, and the
+                  self-assessment and reflective writing. Up to 56 CPD hours.
+                </p>
+              </Card>
+            </Reveal>
           </div>
         </div>
       </section>
