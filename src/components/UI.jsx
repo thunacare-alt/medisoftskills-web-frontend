@@ -1,14 +1,38 @@
-import { motion } from 'framer-motion'
+import { useEffect, useRef, useState } from 'react'
 
+export function prefersReducedMotion() {
+  return typeof window !== 'undefined' && window.matchMedia
+    ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    : false
+}
+
+/* Fires once, then disconnects. No animation library, no listener left behind,
+   and nothing runs at all for visitors who ask for reduced motion. */
+export function useInViewOnce(amount = 0.15) {
+  const ref = useRef(null)
+  const [seen, setSeen] = useState(false)
+  useEffect(() => {
+    const el = ref.current
+    if (!el || seen) return
+    if (prefersReducedMotion() || typeof IntersectionObserver === 'undefined') { setSeen(true); return }
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) if (e.isIntersecting) { setSeen(true); io.disconnect() }
+    }, { threshold: amount, rootMargin: '0px 0px -8% 0px' })
+    io.observe(el)
+    return () => io.disconnect()
+  }, [amount, seen])
+  return [ref, seen]
+}
+
+/* Scroll reveal. Same props as before: delay, y, className. */
 export function Reveal({ children, delay = 0, y = 18, className = '' }) {
+  const [ref, seen] = useInViewOnce(0.15)
   return (
-    <motion.div
-      className={className}
-      initial={{ opacity: 0, y }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.15 }}
-      transition={{ duration: 0.45, delay, ease: 'easeOut' }}
-    >{children}</motion.div>
+    <div
+      ref={ref}
+      className={'reveal' + (seen ? ' in' : '') + (className ? ' ' + className : '')}
+      style={{ '--reveal-y': y + 'px', '--reveal-delay': delay + 's' }}
+    >{children}</div>
   )
 }
 

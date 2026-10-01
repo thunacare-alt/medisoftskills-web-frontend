@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { AnimatePresence, motion } from 'framer-motion'
 import { PageHero, Card, Stepper, Reveal } from '../components/UI.jsx'
 
 const steps = ['Create account', 'Verify OTP', 'Activated']
@@ -47,9 +46,9 @@ export default function Join() {
         <div className="container" style={{ maxWidth: 720 }}>
           <Stepper steps={steps} current={step} />
           {err && <div className="note bad sm" style={{ marginBottom: 14 }}>{err}</div>}
-          <AnimatePresence mode="wait">
+          <>
             {step === 0 && (
-              <motion.div key="s0" initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }}>
+              <div key="s0" className="anim-in">
                 <Card>
                   <h3>Create your account</h3>
                   <p className="sm">Register with your email or phone number. This is the number/ID you will use for OTP and course access.</p>
@@ -90,11 +89,11 @@ export default function Join() {
                     </div>
                   </form>
                 </Card>
-              </motion.div>
+              </div>
             )}
 
             {step === 1 && (
-              <motion.div key="s1" initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }}>
+              <div key="s1" className="anim-in">
                 <Card>
                   <h3>Activate your account</h3>
                   <p className="sm">We sent a 6-digit OTP to <b>{dest}</b>. Enter it below to activate your account.</p>
@@ -112,11 +111,11 @@ export default function Join() {
                   </form>
                   <div className="hint" style={{ marginTop: 12 }}>Didn’t get it? Check spam, or resend — the code stays valid for 10 minutes.</div>
                 </Card>
-              </motion.div>
+              </div>
             )}
 
             {step === 2 && (
-              <motion.div key="s2" initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }}>
+              <div key="s2" className="anim-in">
                 <Card className="tint-teal">
                   <h3>Account activated ✓</h3>
                   <p className="sm">Your account is active. Next: submit your KYC documents — ID, qualification and registration details.</p>
@@ -125,9 +124,9 @@ export default function Join() {
                     <Link to="/packages" className="btn ghost">View packages first</Link>
                   </div>
                 </Card>
-              </motion.div>
+              </div>
             )}
-          </AnimatePresence>
+          </>
           <Reveal delay={0.1}>
             <div className="note info sm" style={{ marginTop: 20 }}>
               Your account stays in <b>pending KYC</b> state until documents are approved. You can browse packages meanwhile, but course access starts after approval.

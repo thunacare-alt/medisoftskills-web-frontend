@@ -1,6 +1,5 @@
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { lazy, Suspense, useEffect } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
 import Layout from './components/Layout.jsx'
 import { FloatEnquiry } from './components/Motion.jsx'
 
@@ -60,15 +59,8 @@ export default function App() {
     <Layout>
       <ScrollTop />
       <FloatEnquiry />
-      <AnimatePresence mode="wait">
-        <motion.main
-          key={location.pathname}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.25, ease: 'easeOut' }}
-        >
-          <Suspense fallback={<RouteFallback />}>
+      <main key={location.pathname} className="route-fade">
+        <Suspense fallback={<RouteFallback />}>
           <Routes location={location}>
             <Route path="/" element={<Home />} />
             <Route path="/packages" element={<Packages />} />
@@ -80,9 +72,8 @@ export default function App() {
             <Route path="/institutions" element={<Institutions />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
-          </Suspense>
-        </motion.main>
-      </AnimatePresence>
+        </Suspense>
+      </main>
     </Layout>
   )
 }

@@ -6,7 +6,7 @@ export default function Packages() {
   return (
     <>
       <PageHero eyebrow="Packages & fees" title="Choose your package — buy any time, complete in sequence."
-        lead="Five packages, 48 CPD hours in total. Each package is open for 60 days from activation, and the next one unlocks when the previous is completed.">
+        lead="Five packages, 56 CPD hours in total. Each package is open for 60 days from activation, and the next one unlocks when the previous is completed.">
         <div style={{ display: 'flex', gap: 12, marginTop: 16, flexWrap: 'wrap' }}>
           <Link to="/join" className="btn">Join the Course</Link>
           <Link to="/journey" className="btn ghost">See the learner journey</Link>

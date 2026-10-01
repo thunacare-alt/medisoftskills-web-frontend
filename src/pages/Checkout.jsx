@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
 import { PageHero, Card, Stepper, Badge } from '../components/UI.jsx'
 import { packages } from '../data/site.js'
 
@@ -91,19 +90,19 @@ export default function Checkout() {
                 </div>
               </div>
               {err && <div className="note bad sm" style={{ marginTop: 12 }}>{err}</div>}
-              <AnimatePresence mode="wait">
-                {stage === 0 && <motion.button key="pay" className="btn block" style={{ marginTop: 16 }} onClick={pay}>Pay now</motion.button>}
-                {stage === 1 && <motion.div key="proc" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="note info sm" style={{ marginTop: 16 }}>Processing payment… connecting to gateway.</motion.div>}
+              <>
+                {stage === 0 && <button key="pay" className="btn block anim-in" style={{ marginTop: 16 }} onClick={pay}>Pay now</button>}
+                {stage === 1 && <div key="proc" className="note info sm anim-in" style={{ marginTop: 16 }}>Processing payment… connecting to gateway.</div>}
                 {stage === 2 && (
-                  <motion.div key="done" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} style={{ marginTop: 16 }}>
+                  <div key="done" style={{ marginTop: 16 }}>
                     <div className="note ok sm"><b>Payment successful ✓</b><br />Receipt issued. Course access unlocked — your 60-day access window starts today.</div>
                     <div style={{ display: 'flex', gap: 10, marginTop: 12, flexWrap: 'wrap' }}>
                       <Link to="/dashboard" className="btn teal sm">Go to my courses</Link>
                       <button className="btn ghost sm">Download receipt</button>
                     </div>
-                  </motion.div>
+                  </div>
                 )}
-              </AnimatePresence>
+              </>
               <ul className="list dash" style={{ marginTop: 16 }}>
                 <li>Access: 60 days from activation.</li>
                 <li>Next package unlocks on completion.</li>

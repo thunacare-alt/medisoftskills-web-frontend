@@ -128,3 +128,41 @@
   .float-cta span { display: none; }
   .float-cta { padding: 14px; }
 }
+
+/* ---------------------------------------------------------------
+   Reveal / route / step animation â€” CSS only, no animation library.
+   Everything below is compositor-friendly opacity + transform.
+   --------------------------------------------------------------- */
+.reveal {
+  opacity: 0;
+  transform: translate3d(0, var(--reveal-y, 18px), 0);
+  transition: opacity .45s ease-out, transform .45s ease-out;
+  transition-delay: var(--reveal-delay, 0s);
+}
+
+.reveal.in {
+  opacity: 1;
+  transform: none;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translate3d(0, 10px, 0); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes route-in {
+  from { opacity: 0; transform: translate3d(0, 8px, 0); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Keyed stage panels (checkout, KYC, join) remount, so the animation replays. */
+.anim-in { animation: fade-up .35s ease-out both; }
+
+/* Route change: the router remounts <main> on every navigation. */
+.route-fade { animation: route-in .25s ease-out both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .anim-in,
+  .route-fade { animation: none; }
+}

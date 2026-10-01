@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
 import { Reveal, Chip, Badge, SectionHead, Card } from '../components/UI.jsx'
 import { Marquee, StatBand } from '../components/Motion.jsx'
 import { packages, journeyStages, pathways, rules, brand } from '../data/site.js'
@@ -22,7 +21,7 @@ export default function Home() {
                 <Link to="/packages" className="btn ghost">View packages &amp; fees</Link>
               </div>
               <div className="trust">
-                <Chip>48 CPD hours across 5 packages</Chip>
+                <Chip>56 CPD hours across 5 packages</Chip>
                 <Chip>60-day access per package</Chip>
                 <Chip>MAcadMEd route (AoME, UK)</Chip>
                 <Chip>Virtual skills labs</Chip>
@@ -37,7 +36,7 @@ export default function Home() {
 
       <StatBand
         stats={[
-          { value: 48, label: 'CPD hours on completion' },
+          { value: 56, label: 'CPD hours on completion' },
           { value: 5, label: 'Sequential packages' },
           { value: 60, suffix: ' days', label: 'Access per package' },
           { value: 100, suffix: '%', label: 'Online & self-paced' }
@@ -47,7 +46,7 @@ export default function Home() {
       <Marquee
         items={[
           'Basic Theory', 'E-Learning', 'Virtual Skills Lab', 'Certification Plus',
-          'MAcadMEd route (AoME, UK)', '48 CPD hours', 'Reflective assessment', '60-day access'
+          'MAcadMEd route (AoME, UK)', '56 CPD hours', 'Reflective assessment', '60-day access'
         ]}
       />
 
@@ -159,8 +158,7 @@ export default function Home() {
 
 function DashboardPreview() {
   return (
-    <motion.div className="card" style={{ padding: 18, boxShadow: 'var(--sh-2)' }}
-      initial={{ opacity: 0, scale: .97 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: .5 }}>
+    <div className="card" style={{ padding: 18, boxShadow: 'var(--sh-2)' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
         <b style={{ fontFamily: '"Plus Jakarta Sans",sans-serif' }}>My courses</b>
         <Badge tone="b2">Access: 60 days</Badge>
@@ -180,6 +178,6 @@ function DashboardPreview() {
       <div className="note info" style={{ marginTop: 6, padding: '11px 13px' }}>
         <b className="sm">Next action:</b> <span className="sm">Basic Plus — practice lab module 2 of 6.</span>
       </div>
-    </motion.div>
+    </div>
   )
 }

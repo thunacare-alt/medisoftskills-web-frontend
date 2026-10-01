@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
 import { Card, Badge, Reveal, SectionHead } from '../components/UI.jsx'
 import { packages } from '../data/site.js'
 

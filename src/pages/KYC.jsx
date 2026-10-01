@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
 import { PageHero, Card, Stepper } from '../components/UI.jsx'
 
 const docs = [
@@ -45,14 +44,14 @@ export default function KYC() {
                 <div key={d.id} style={{ marginBottom: 12 }}>
                   <label className="label">{d.label} <span className="muted">— {d.hint}</span></label>
                   {files[d.id] ? (
-                    <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="file-row">
+                    <div className="file-row">
                       <span className="ic" style={{ width: 30, height: 30, fontSize: 14 }}>📄</span>
                       <div style={{ flex: 1 }}>
                         <b className="sm">{files[d.id].name}</b>
                         <div className="xs muted">{files[d.id].size} KB · uploaded</div>
                       </div>
                       <button className="btn ghost sm" onClick={() => setFiles(v => { const c = { ...v }; delete c[d.id]; return c })}>Replace</button>
-                    </motion.div>
+                    </div>
                   ) : (
                     <label className="drop" style={{ display: 'block' }}>
                       <input type="file" hidden onChange={e => pick(d.id, e)} />
@@ -71,9 +70,9 @@ export default function KYC() {
             </div>
           </Card>
 
-          <AnimatePresence>
+          <>
             {status !== 'draft' && (
-              <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} style={{ marginTop: 18 }}>
+              <div style={{ marginTop: 18 }}>
                 {status === 'pending' && (
                   <Card className="tint-warn">
                     <h4>Status: pending review</h4>
@@ -102,9 +101,9 @@ export default function KYC() {
                     <button className="btn sm" onClick={() => { setStatus('draft'); setFiles(v => { const c = { ...v }; delete c.reg; return c }) }}>Re-upload now</button>
                   </Card>
                 )}
-              </motion.div>
+              </div>
             )}
-          </AnimatePresence>
+          </>
           <div className="xs muted" style={{ marginTop: 16 }}>
             Demo flow — live build posts to <code>/api/kyc/submit</code> and the admin portal review queue.
           </div>

@@ -19,11 +19,10 @@ export default defineConfig({
     assetsInlineLimit: 2048,
     rollupOptions: {
       output: {
-        // Keep the entry tiny: React, router and the motion engine each cache separately,
-        // so a copy tweak never invalidates the framework bundles.
+        // Keep the entry tiny: React and the router cache separately, so a copy
+        // tweak never invalidates the framework bundles.
         manualChunks(id) {
           if (!id.includes('node_modules')) return
-          if (id.includes('framer-motion') || id.includes('motion-dom') || id.includes('motion-utils')) return 'motion'
           if (id.includes('react-router') || id.includes('@remix-run')) return 'router'
           if (id.includes('react-dom') || id.includes('/react/') || id.includes('scheduler')) return 'react'
           return 'vendor'
