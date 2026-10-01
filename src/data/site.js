@@ -5,6 +5,16 @@ export const brand = {
   site: 'medisoftskills.com'
 }
 
+// Fill these in to switch the floating enquiry button on. WhatsApp number must be
+// country code + number, digits only (e.g. '919876543210'). While it is empty the
+// button is not rendered at all.
+export const contact = {
+  whatsapp: '',
+  whatsappMessage: 'Hi, I would like details about the Medisoftskills certificate course.',
+  email: '',
+  phone: ''
+}
+
 export const nav = [
   { to: '/', label: 'Home' },
   { to: '/packages', label: 'Packages & Fees' },

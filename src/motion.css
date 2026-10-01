@@ -1,0 +1,130 @@
+/* ------------------------------------------------------------------
+   Motion layer — CSS-only where possible so nothing ships on the
+   critical path, and everything degrades under prefers-reduced-motion.
+   ------------------------------------------------------------------ */
+
+/* --- stat band ---------------------------------------------------- */
+.statband {
+  padding: 28px 0;
+  border-top: 1px solid rgba(15, 23, 42, .08);
+  border-bottom: 1px solid rgba(15, 23, 42, .08);
+  background: #fff;
+}
+.statband-inner {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  text-align: center;
+}
+.stat-n {
+  font-size: clamp(28px, 3.6vw, 40px);
+  font-weight: 800;
+  letter-spacing: -.02em;
+  line-height: 1.1;
+  color: var(--brand, #0d5bd1);
+  font-variant-numeric: tabular-nums;
+}
+.stat-l {
+  margin-top: 4px;
+  font-size: 13.5px;
+  opacity: .72;
+}
+
+/* --- marquee (transform-only animation = compositor thread) -------- */
+.marquee {
+  position: relative;
+  overflow: hidden;
+  padding: 16px 0;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  gap: 38px;
+  will-change: transform;
+  animation: marquee var(--marquee-duration, 30s) linear infinite;
+}
+.marquee:hover .marquee-track { animation-play-state: paused; }
+.marquee-track.static {
+  width: auto;
+  flex-wrap: wrap;
+  justify-content: center;
+  animation: none;
+}
+.marquee-item {
+  white-space: nowrap;
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: .01em;
+  opacity: .68;
+}
+@keyframes marquee {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+
+/* --- Remotion render slot ----------------------------------------- */
+.motion-stage {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 18px;
+  background: #08192f;
+  box-shadow: 0 18px 50px rgba(8, 25, 47, .18);
+}
+.motion-stage-video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* --- floating enquiry button -------------------------------------- */
+.float-cta {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 60;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 12px 18px;
+  border-radius: 999px;
+  background: #1faa59;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 10px 30px rgba(8, 25, 47, .22);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.float-cta:hover { transform: translateY(-2px); box-shadow: 0 14px 34px rgba(8, 25, 47, .28); }
+
+/* --- route-level suspense fallback -------------------------------- */
+.route-loader {
+  display: grid;
+  place-items: center;
+  min-height: 46vh;
+}
+.route-loader span {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 3px solid rgba(13, 91, 209, .18);
+  border-top-color: var(--brand, #0d5bd1);
+  animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* --- reduced motion ----------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none; width: auto; flex-wrap: wrap; justify-content: center; }
+  .float-cta { transition: none; }
+  .route-loader span { animation-duration: 1.6s; }
+}
+
+@media (max-width: 640px) {
+  .float-cta span { display: none; }
+  .float-cta { padding: 14px; }
+}

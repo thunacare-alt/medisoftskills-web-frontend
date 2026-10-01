@@ -27,9 +27,13 @@ src/
   main.jsx                 app entry + router
   App.jsx                  route table
   theme.css                design tokens + global styles
+  motion.css               motion layer: stat band, marquee, floating CTA, loaders
+  fonts.css                self-hosted @font-face rules
+  fonts/                   woff2 files — no third-party font requests
   components/
     Layout.jsx             shell: header, nav, footer
-    UI.jsx                 shared UI primitives
+    UI.jsx                 shared UI primitives (Reveal, Card, Chip, Stepper)
+    Motion.jsx             marquee, animated counters, Remotion render slot, enquiry CTA
   data/
     site.js                content/config data (packages, plans, copy)
   pages/
@@ -58,7 +62,30 @@ src/
 | `/dashboard` | Dashboard |
 | `*` | NotFound |
 
-## Notes
+## Performance
 
-- All site content (packages, plans, copy) is centralised in `src/data/site.js` — edit there rather than in page components.
-- Dev and preview servers bind `0.0.0.0:8137` so they can be reached from outside the host.
+- Route-level code splitting — only Home ships in the entry chunk; the rest are fetched on demand and warmed during browser idle time.
+- Vendor chunking — React, the router and the motion engine each cache independently, so content edits never invalidate them.
+- Self-hosted fonts — Plus Jakarta Sans and Inter are served from this deployment, removing two render-blocking third-party requests.
+- Animation is transform/opacity only, and every effect is disabled under `prefers-reduced-motion`.
+
+## Motion
+
+In-page motion (animated counters, marquee, scroll reveals, page transitions) runs on framer-motion and stays off the critical path.
+
+Remotion is used as a renderer, not a runtime. Compositions are rendered offline to files and dropped into `public/media/`:
+
+```
+public/media/hero.webm          # VP9 render
+public/media/hero.mp4           # H.264 fallback
+public/media/hero-poster.jpg    # first-frame poster
+```
+
+`MotionStage` picks them up automatically, and renders nothing at all for visitors who ask for reduced motion.
+
+## Configuration
+
+- Site content lives in `src/data/site.js`.
+- WhatsApp enquiry button: set `contact.whatsapp` in `src/data/site.js` (digits only, country code first). While it is empty, the button does not render.
+- Routing uses `HashRouter` (URLs like `/#/packages`), so it works on any static host with no server rewrites.
+- Dev and preview servers bind `0.0.0.0:8137`.

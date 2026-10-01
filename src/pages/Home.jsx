@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Reveal, Chip, Badge, SectionHead, Card } from '../components/UI.jsx'
+import { Marquee, StatBand } from '../components/Motion.jsx'
 import { packages, journeyStages, pathways, rules, brand } from '../data/site.js'
 
 export default function Home() {
@@ -33,6 +34,22 @@ export default function Home() {
           </Reveal>
         </div>
       </section>
+
+      <StatBand
+        stats={[
+          { value: 48, label: 'CPD hours on completion' },
+          { value: 5, label: 'Sequential packages' },
+          { value: 60, suffix: ' days', label: 'Access per package' },
+          { value: 100, suffix: '%', label: 'Online & self-paced' }
+        ]}
+      />
+
+      <Marquee
+        items={[
+          'Basic Theory', 'E-Learning', 'Virtual Skills Lab', 'Certification Plus',
+          'MAcadMEd route (AoME, UK)', '48 CPD hours', 'Reflective assessment', '60-day access'
+        ]}
+      />
 
       <section className="section alt">
         <div className="container">
