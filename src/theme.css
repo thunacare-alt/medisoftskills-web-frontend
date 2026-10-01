@@ -770,3 +770,44 @@ table.tbl tr:nth-child(even) td{background:#fafcff}
    travelling head dot AND the tracker progress bar all read the same value.
    .tl must not re-declare --p, or it would shadow the inherited one. */
 .tl { --p: unset; }
+
+
+/* =================================================================
+   Legal documents â€” Terms, Privacy, Refunds
+   One layout for all three: sticky contents rail + readable measure.
+   ================================================================= */
+.legal-wrap{display:grid; grid-template-columns:248px 1fr; gap:46px; align-items:start}
+.legal-side-in{position:sticky; top:100px; max-height:calc(100vh - 130px); overflow:auto; padding-right:6px}
+.legal-side h4{font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin:0 0 10px; font-family:Inter,sans-serif; font-weight:700}
+.legal-side ol{list-style:none; margin:0; padding:0; counter-reset:ls}
+.legal-side li{counter-increment:ls}
+.legal-side a{display:block; padding:6px 0 6px 12px; font-size:13.5px; line-height:1.35; color:var(--muted); border-left:2px solid var(--line); text-decoration:none; transition:color .15s, border-color .15s}
+.legal-side a::before{content:counter(ls) ". "; color:#9fb3c8}
+.legal-side a:hover{color:var(--ink); border-color:#b9cee5}
+.legal-side a.on{color:var(--brand); border-color:var(--brand); font-weight:600}
+.legal{max-width:760px}
+.legal-summary{background:var(--brand-050); border:1px solid #d8e6fb; padding:18px 22px; margin-bottom:30px}
+.legal-summary h4{margin:0 0 8px; font-size:15px}
+.legal-summary ul{margin:0; padding-left:20px}
+.legal-summary li{font-size:14px; color:var(--ink-2); margin:5px 0}
+.legal h2{font-size:clamp(19px,2vw,23px); margin:0 0 10px; scroll-margin-top:104px}
+.legal section{padding-top:30px; border-top:1px solid var(--line); margin-top:30px}
+.legal section:first-of-type{border-top:0; margin-top:0; padding-top:0}
+.legal p{color:var(--ink-2); font-size:15.5px; line-height:1.75; margin:0 0 12px}
+.legal ul{margin:6px 0 14px; padding-left:22px}
+.legal li{color:var(--ink-2); font-size:15.5px; line-height:1.7; margin:7px 0}
+.legal a{color:var(--brand)}
+
+/* Items only the company can confirm â€” impossible to miss on purpose. */
+.ph{background:#fff6e0; border-bottom:1px dashed var(--warn); color:#8a5600; font-weight:600; padding:0 3px}
+
+/* Five footer columns now that Legal has joined. */
+.footer .container{grid-template-columns:1.4fr .85fr .85fr .9fr .9fr}
+
+@media(max-width:960px){
+  .legal-wrap{grid-template-columns:1fr; gap:26px}
+  .legal-side-in{position:static; max-height:none; border:1px solid var(--line); border-radius:var(--r); padding:14px 16px; background:var(--bg)}
+  .legal-side ol{columns:2; column-gap:22px}
+  .legal{max-width:none}
+}
+@media(max-width:560px){ .legal-side ol{columns:1} }

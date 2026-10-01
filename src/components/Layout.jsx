@@ -53,6 +53,12 @@ export default function Layout({ children }) {
             <Link to="/institutions">Bulk enrolment</Link>
             <Link to="/institutions">Voucher codes</Link>
           </div>
+          <div>
+            <h4>Legal</h4>
+            <Link to="/terms">Terms &amp; Conditions</Link>
+            <Link to="/privacy">Privacy Policy</Link>
+            <Link to="/refunds">Refund Policy</Link>
+          </div>
         </div>
         <div className="container foot-bot">
           <span>© {new Date().getFullYear()} {brand.name} · {brand.site}</span>

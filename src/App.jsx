@@ -14,6 +14,7 @@ const KYC = lazy(() => import('./pages/KYC.jsx'))
 const Checkout = lazy(() => import('./pages/Checkout.jsx'))
 const Dashboard = lazy(() => import('./pages/Dashboard.jsx'))
 const Institutions = lazy(() => import('./pages/Institutions.jsx'))
+const Legal = lazy(() => import('./pages/Legal.jsx'))
 const NotFound = lazy(() => import('./pages/NotFound.jsx'))
 
 function RouteFallback() {
@@ -41,7 +42,10 @@ export default function App() {
       '#/join': () => import('./pages/Join.jsx'),
       '#/kyc': () => import('./pages/KYC.jsx'),
       '#/checkout': () => import('./pages/Checkout.jsx'),
-      '#/dashboard': () => import('./pages/Dashboard.jsx')
+      '#/dashboard': () => import('./pages/Dashboard.jsx'),
+      '#/terms': () => import('./pages/Legal.jsx'),
+      '#/privacy': () => import('./pages/Legal.jsx'),
+      '#/refunds': () => import('./pages/Legal.jsx')
     }
     const warm = (e) => {
       const el = e.target && e.target.closest ? e.target.closest('a[href^="#/"]') : null
@@ -73,6 +77,9 @@ export default function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/institutions" element={<Institutions />} />
             <Route path="/certificate" element={<Certificate />} />
+            <Route path="/terms" element={<Legal />} />
+            <Route path="/privacy" element={<Legal />} />
+            <Route path="/refunds" element={<Legal />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
