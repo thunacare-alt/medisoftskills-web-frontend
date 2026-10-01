@@ -764,3 +764,9 @@ table.tbl tr:nth-child(even) td{background:#fafcff}
   .sstep.current i { transform: none; }
   .sbar > span { transition: none; }
 }
+
+/* --- UX v4.1: one progress source of truth for the whole section ---------
+   --p is now written on the section container so the timeline spine, the
+   travelling head dot AND the tracker progress bar all read the same value.
+   .tl must not re-declare --p, or it would shadow the inherited one. */
+.tl { --p: unset; }

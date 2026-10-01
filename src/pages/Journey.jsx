@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Reveal, PageHero, Card, SectionHead, useInViewOnce, prefersReducedMotion } from '../components/UI.jsx'
 import { useScrollProgress, useActiveIndex } from '../components/Motion.jsx'
@@ -78,14 +78,25 @@ function scrollToStage(n) {
 export default function Journey() {
   const phaseOf = n => phases.find(p => n >= p.from && n <= p.to)
   const tlRef = useRef(null)
-  useScrollProgress(tlRef)                        // writes --p on the timeline
-  const active = useActiveIndex(tlRef, '.tl-stage')
+  useScrollProgress(tlRef)                          // writes --p on the section
+  const tracked = useActiveIndex(tlRef, '.tl-stage')
+
+  /* Clicking a step pins it for a moment. The tracker follows whatever stage
+     sits mid-viewport, which right after a jump can already be the next one. */
+  const [pinned, setPinned] = useState(null)
+  const active = pinned === null ? tracked : pinned
+  useEffect(() => {
+    if (pinned === null) return
+    const t = setTimeout(() => setPinned(null), 1500)
+    return () => clearTimeout(t)
+  }, [pinned])
+  const go = n => { setPinned(n - 1); scrollToStage(n) }
   return (
     <>
       <PageHero eyebrow="How it works" title="The learner journey, screen by screen"
         lead="Seven stages from first visit to certificate. Each stage shows the learner screens and the support that runs behind them." />
       <section className="section tight">
-        <div className="container">
+        <div className="container" ref={tlRef}>
           <Reveal>
             <nav className="stepper" aria-label="Journey stages">
               {phases.map((ph, pi) => (
@@ -98,7 +109,7 @@ export default function Journey() {
                       return (
                         <button type="button" key={s.n} className={'sstep ' + state}
                           aria-current={state === 'current' ? 'step' : undefined}
-                          onClick={() => scrollToStage(s.n)}>
+                          onClick={() => go(s.n)}>
                           <i aria-hidden="true">{s.n}</i><b>{s.stage}</b>
                         </button>
                       )
@@ -116,7 +127,7 @@ export default function Journey() {
 
           <JourneyMap />
 
-          <div className="tl" ref={tlRef} style={{ marginTop: 30 }}>
+          <div className="tl" style={{ marginTop: 30 }}>
             <div className="head-dot" aria-hidden="true" />
             {journeyStages.map((s) => {
               const ph = phaseOf(s.n)
