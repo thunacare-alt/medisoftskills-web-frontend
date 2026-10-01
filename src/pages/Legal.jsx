@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { PageHero } from '../components/UI.jsx'
+import { PageHero, prefersReducedMotion } from '../components/UI.jsx'
 import { brand } from '../data/site.js'
 
 /* Three legal documents, one lazy chunk. The route decides which one renders,
@@ -8,10 +8,15 @@ import { brand } from '../data/site.js'
 
 const CONTACT = 'admin@medisoftskills.com'
 
-/* Items only the company can confirm. Rendered highlighted so they can never
-   ship unnoticed. Replace the text, drop the <Ph /> wrapper. */
-function Ph({ children }) {
-  return <span className="ph" title="To be confirmed before launch">{children}</span>
+/* Items only the company can confirm, written in the copy as [[like this]]
+   and highlighted on render so they can never ship unnoticed. */
+const PH_RE = /\[\[(.+?)\]\]/
+function Rich({ text }) {
+  return String(text).split(PH_RE).map((part, i) =>
+    i % 2
+      ? <span className="ph" key={i} title="To be confirmed before launch">{part}</span>
+      : part
+  )
 }
 
 const DOCS = {
@@ -27,7 +32,7 @@ const DOCS = {
     ],
     sections: [
       { h: 'Who we are and what these terms cover', p: [
-        'This website and the courses offered on it are operated by <Ph>[registered entity name]</Ph>, registered at <Ph>[registered office address]</Ph> ("we", "us", "our").',
+        'This website and the courses offered on it are operated by [[registered entity name]], registered at [[registered office address]] ("we", "us", "our").',
         'By creating an account, or by paying for a package, you agree to these terms. If you do not accept them, please do not use the service. Where a separate written agreement exists — for example an institutional bulk enrolment — that agreement takes precedence over these terms for the seats it covers.'
       ] },
       { h: 'Eligibility', p: [
@@ -70,7 +75,7 @@ const DOCS = {
       ] },
       { h: 'Changes to these terms, governing law and contact', p: [
         'We may update these terms to reflect changes in the service or the law. The version in force is the one published when you paid for your package; where changes materially affect you, we will give notice on this page or by email.',
-        'These terms are governed by the laws of <Ph>[governing law and courts]</Ph>. Questions about these terms: ' + CONTACT + '.'
+        'These terms are governed by the laws of [[governing law and courts]]. Questions about these terms: ' + CONTACT + '.'
       ] }
     ]
   },
@@ -87,7 +92,7 @@ const DOCS = {
     ],
     sections: [
       { h: 'Who is responsible for your data', p: [
-        'The data controller is <Ph>[registered entity name]</Ph>, <Ph>[registered office address]</Ph>. Questions, requests and complaints go to ' + CONTACT + '.'
+        'The data controller is [[registered entity name]], [[registered office address]]. Questions, requests and complaints go to ' + CONTACT + '.'
       ] },
       { h: 'What we collect', p: ['We collect only what the course and the certificate require:'],
         ul: [
@@ -144,7 +149,7 @@ const DOCS = {
         'We use the cookies and local storage needed to keep you signed in and to remember your progress. We do not use advertising or cross-site tracking cookies on this site.'
       ] },
       { h: 'Where your data is held and changes to this policy', p: [
-        'Your data may be processed on servers outside your country of residence by the providers listed above, under contractual protections. Our records are held and processed on the basis of the laws of <Ph>[governing law and courts]</Ph>.',
+        'Your data may be processed on servers outside your country of residence by the providers listed above, under contractual protections. Our records are held and processed on the basis of the laws of [[governing law and courts]].',
         'If this policy changes in a way that affects you, we will update the date at the top of this page and, where the change is significant, tell you by email.'
       ] }
     ]
@@ -210,7 +215,7 @@ const DOCS = {
         'Seats bought on behalf of an institution — including seats issued as voucher codes — are governed by the signed agreement. Where that agreement sets different cancellation terms, or names a different notice period, its terms apply to those seats. Address queries to ' + CONTACT + '.'
       ] },
       { h: 'Governing law', p: [
-        'This policy is governed by the laws of <Ph>[governing law and courts]</Ph>. Nothing in it removes any right you have under consumer law in your country of residence, where that law gives you stronger protection.'
+        'This policy is governed by the laws of [[governing law and courts]]. Nothing in it removes any right you have under consumer law in your country of residence, where that law gives you stronger protection.'
       ] }
     ]
   }
@@ -238,7 +243,21 @@ export default function Legal() {
   const key = pathname.replace(/^\//, '') || 'terms'
   const doc = DOCS[key] || DOCS.terms
   const [active, setActive] = useState('sec-1')
+  const [pin, setPin] = useState(null)
   const articleRef = useScrollSpy(setActive)
+  const shown = pin || active
+
+  /* HashRouter reads "#sec-4" as a route, so a plain in-page anchor would drop
+     the visitor on the 404. Jump in JS instead, and hold the highlight briefly
+     so it matches the click rather than wherever the scroll landed. */
+  const jump = (e, id) => {
+    e.preventDefault()
+    const el = document.getElementById(id)
+    if (!el) return
+    setPin(id)
+    setTimeout(() => setPin(null), 1200)
+    el.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' })
+  }
 
   const updated = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
 
@@ -254,11 +273,16 @@ export default function Legal() {
             <div className="legal-side-in">
               <h4>On this page</h4>
               <ol>
-                {doc.sections.map((s, i) => (
-                  <li key={s.h}>
-                    <a href={'#' + 'sec-' + (i + 1)} className={active === 'sec-' + (i + 1) ? 'on' : ''}>{s.h}</a>
-                  </li>
-                ))}
+                {doc.sections.map((s, i) => {
+                  const id = 'sec-' + (i + 1)
+                  return (
+                    <li key={s.h}>
+                      <a href={'#/' + key} onClick={e => jump(e, id)}
+                        aria-current={shown === id ? 'true' : undefined}
+                        className={shown === id ? 'on' : ''}>{s.h}</a>
+                    </li>
+                  )
+                })}
               </ol>
             </div>
           </aside>
@@ -272,9 +296,9 @@ export default function Legal() {
             {doc.sections.map((s, i) => (
               <section key={s.h} id={'sec-' + (i + 1)}>
                 <h2>{s.h}</h2>
-                {(s.p || []).map((t, j) => <p key={j}>{t}</p>)}
-                {s.ul && <ul>{s.ul.map(t => <li key={t}>{t}</li>)}</ul>}
-                {(s.p2 || []).map((t, j) => <p key={'b' + j}>{t}</p>)}
+                {(s.p || []).map((t, j) => <p key={j}><Rich text={t} /></p>)}
+                {s.ul && <ul>{s.ul.map(t => <li key={t}><Rich text={t} /></li>)}</ul>}
+                {(s.p2 || []).map((t, j) => <p key={'b' + j}><Rich text={t} /></p>)}
               </section>
             ))}
 
