@@ -47,7 +47,15 @@ export function useActiveIndex(containerRef, selector) {
       setIdx(els.indexOf(visible[0].target))
     }, { rootMargin: '-38% 0px -48% 0px', threshold: 0 })
     els.forEach(el => io.observe(el))
-    return () => io.disconnect()
+    // At the very bottom the last stage sits above the observer band, so the
+    // tracker would otherwise stall on the second-to-last step. Lock it to the end.
+    const atEnd = () => {
+      const d = document.documentElement
+      if (d.scrollTop + window.innerHeight >= d.scrollHeight - 60) setIdx(els.length - 1)
+    }
+    window.addEventListener('scroll', atEnd, { passive: true })
+    atEnd()
+    return () => { io.disconnect(); window.removeEventListener('scroll', atEnd) }
   }, [containerRef, selector])
   return idx
 }
