@@ -6,6 +6,7 @@ import { FloatEnquiry } from './components/Motion.jsx'
 // Home stays in the entry chunk (it is the landing page). Every other route is
 // code-split so first paint ships a fraction of the JavaScript.
 import Home from './pages/Home.jsx'
+const Certificate = lazy(() => import('./pages/Certificate.jsx'))
 const Packages = lazy(() => import('./pages/Packages.jsx'))
 const Journey = lazy(() => import('./pages/Journey.jsx'))
 const Join = lazy(() => import('./pages/Join.jsx'))
@@ -33,6 +34,7 @@ export default function App() {
   // they never open, and navigation still feels instant.
   useEffect(() => {
     const loaders = {
+      '#/certificate': () => import('./pages/Certificate.jsx'),
       '#/packages': () => import('./pages/Packages.jsx'),
       '#/journey': () => import('./pages/Journey.jsx'),
       '#/institutions': () => import('./pages/Institutions.jsx'),
@@ -70,6 +72,7 @@ export default function App() {
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/institutions" element={<Institutions />} />
+            <Route path="/certificate" element={<Certificate />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>

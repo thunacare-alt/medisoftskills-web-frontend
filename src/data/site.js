@@ -19,6 +19,7 @@ export const nav = [
   { to: '/', label: 'Home' },
   { to: '/packages', label: 'Packages & Fees' },
   { to: '/journey', label: 'How it works' },
+  { to: '/certificate', label: 'Certificate' },
   { to: '/institutions', label: 'For Institutions' }
 ]
 

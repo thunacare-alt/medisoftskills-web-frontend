@@ -241,3 +241,73 @@ table.tbl tr:nth-child(even) td{background:#fafcff}
 @media (prefers-reduced-motion: no-preference){
   html{ scroll-behavior:smooth }
 }
+
+/* ===== certificate mockup — CSS only, no image request ===== */
+.cert-wrap{ display:flex; justify-content:center }
+.cert{
+  width:min(780px,100%);
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:var(--r-lg);
+  padding:13px;
+  box-shadow:0 26px 64px rgba(11,76,176,.15);
+}
+.cert-inner{
+  border:1px solid #dfe9f7;
+  border-radius:11px;
+  padding:40px 36px 32px;
+  text-align:center;
+  background:
+    radial-gradient(420px 200px at 50% 0%, rgba(13,91,209,.05), transparent 70%),
+    linear-gradient(180deg,#fff 0%, #fbfdff 100%);
+}
+.cert-crest{
+  width:54px; height:54px; margin:0 auto 16px;
+  border-radius:15px;
+  background:linear-gradient(180deg,#1266e0 0%, var(--brand-600) 100%);
+  color:#fff; display:grid; place-items:center;
+  font:800 27px/1 "Plus Jakarta Sans",Inter,sans-serif;
+}
+.cert-kicker{
+  font:800 12.5px/1 "Plus Jakarta Sans",Inter,sans-serif;
+  letter-spacing:3.2px; text-transform:uppercase; color:var(--brand); margin:0 0 16px;
+}
+.cert-rule{
+  width:76px; height:3px; margin:0 auto 24px; border-radius:3px;
+  background:linear-gradient(90deg,var(--brand),var(--teal));
+}
+.cert-line{ font-size:13.5px; color:var(--muted); margin:0 0 6px }
+.cert-name{
+  font:800 clamp(25px,3.4vw,35px)/1.14 "Plus Jakarta Sans",Inter,sans-serif;
+  letter-spacing:-.6px; color:var(--ink); margin:0 0 20px;
+}
+.cert-course{ font-size:15px; color:var(--ink-2); margin:0 0 10px }
+.cert-course b{ color:var(--ink) }
+.cert-subjects{ font-size:13.5px; color:var(--muted); margin:0 auto 22px; max-width:60ch }
+.cert-award{ font-size:13.5px; color:var(--ink-2); margin:0 auto 24px; max-width:54ch }
+.cert-award b{ color:var(--ink) }
+.cert-hours{
+  display:inline-flex; align-items:baseline; gap:9px;
+  background:var(--brand-050); border:1px solid #d6e6ff; border-radius:999px;
+  padding:9px 20px; margin:0 0 26px;
+}
+.cert-hours-n{ font:800 27px/1 "Plus Jakarta Sans",Inter,sans-serif; color:var(--brand) }
+.cert-hours-l{
+  font-size:12.5px; font-weight:700; letter-spacing:.7px; text-transform:uppercase; color:var(--ink-2);
+}
+.cert-meta{
+  display:flex; flex-wrap:wrap; gap:10px 20px; justify-content:center;
+  border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+  padding:15px 0; margin:0 0 24px; font-size:12.5px; color:var(--muted);
+}
+.cert-sign{ display:grid; justify-items:center; gap:3px }
+.cert-sig-line{ display:block; width:180px; border-top:1px solid #b9c9dd; margin-bottom:9px }
+.cert-sign b{ font-size:14px }
+.cert-sign span:last-child{
+  font-size:11.5px; letter-spacing:1.1px; text-transform:uppercase; color:var(--muted);
+}
+@media (max-width:560px){
+  .cert{ padding:8px; border-radius:14px }
+  .cert-inner{ padding:26px 18px 22px; border-radius:10px }
+  .cert-meta{ gap:6px 14px; font-size:12px }
+}
