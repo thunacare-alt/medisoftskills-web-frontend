@@ -64,7 +64,7 @@ src/
 
 ## Performance
 
-- Route-level code splitting — only Home ships in the entry chunk; the rest are fetched on demand and warmed during browser idle time.
+- Route-level code splitting — only Home ships in the entry chunk; the other routes are fetched on demand, and warmed the moment a visitor hovers or focuses their link.
 - Vendor chunking — React, the router and the motion engine each cache independently, so content edits never invalidate them.
 - Self-hosted fonts — Plus Jakarta Sans and Inter are served from this deployment, removing two render-blocking third-party requests.
 - Animation is transform/opacity only, and every effect is disabled under `prefers-reduced-motion`.

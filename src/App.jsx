@@ -29,24 +29,30 @@ function ScrollTop() {
 export default function App() {
   const location = useLocation()
 
-  // Warm the remaining route chunks once the browser is idle: navigation feels
-  // instant without paying for those bytes during first paint.
+  // Fetch a route's chunk the moment a visitor shows intent — hover or keyboard focus
+  // on its link — rather than downloading every route up front. Nobody pays for a page
+  // they never open, and navigation still feels instant.
   useEffect(() => {
-    const warm = () => {
-      import('./pages/Packages.jsx')
-      import('./pages/Journey.jsx')
-      import('./pages/Institutions.jsx')
-      import('./pages/Join.jsx')
-      import('./pages/KYC.jsx')
-      import('./pages/Checkout.jsx')
-      import('./pages/Dashboard.jsx')
+    const loaders = {
+      '#/packages': () => import('./pages/Packages.jsx'),
+      '#/journey': () => import('./pages/Journey.jsx'),
+      '#/institutions': () => import('./pages/Institutions.jsx'),
+      '#/join': () => import('./pages/Join.jsx'),
+      '#/kyc': () => import('./pages/KYC.jsx'),
+      '#/checkout': () => import('./pages/Checkout.jsx'),
+      '#/dashboard': () => import('./pages/Dashboard.jsx')
     }
-    const id = window.requestIdleCallback
-      ? window.requestIdleCallback(warm, { timeout: 2500 })
-      : setTimeout(warm, 2000)
+    const warm = (e) => {
+      const el = e.target && e.target.closest ? e.target.closest('a[href^="#/"]') : null
+      if (!el) return
+      const key = el.getAttribute('href').split('?')[0]
+      if (loaders[key]) loaders[key]()
+    }
+    document.addEventListener('pointerover', warm, { passive: true })
+    document.addEventListener('focusin', warm)
     return () => {
-      if (window.cancelIdleCallback) window.cancelIdleCallback(id)
-      else clearTimeout(id)
+      document.removeEventListener('pointerover', warm)
+      document.removeEventListener('focusin', warm)
     }
   }, [])
 
