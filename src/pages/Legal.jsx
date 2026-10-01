@@ -221,19 +221,38 @@ const DOCS = {
   }
 }
 
+/* Which section is being read. A scroll position is a better signal than an
+   IntersectionObserver here: these sections are short, and an observer band is
+   empty for most of the page — which leaves the highlight stale. This picks the
+   last heading to have passed under the sticky header. */
 function useScrollSpy(handler) {
   const ref = useRef(null)
   useEffect(() => {
     const el = ref.current
     if (!el) return
-    const heads = Array.from(el.querySelectorAll('h2[id]'))
-    if (!heads.length) return
-    const io = new IntersectionObserver(entries => {
-      const seen = entries.filter(e => e.isIntersecting)
-      if (seen.length) handler(seen[seen.length - 1].target.id)
-    }, { rootMargin: '-96px 0px -62% 0px', threshold: 0 })
-    heads.forEach(h => io.observe(h))
-    return () => io.disconnect()
+    let raf = 0
+    const run = () => {
+      const secs = Array.from(el.querySelectorAll('section[id]'))
+      if (!secs.length) return
+      const line = 140
+      let current = secs[0].id
+      for (const s of secs) {
+        if (s.getBoundingClientRect().top <= line) current = s.id
+        else break
+      }
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 40) {
+        current = secs[secs.length - 1].id
+      }
+      handler(current)
+    }
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; run() }) }
+    run()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+    }
   }, [handler])
   return ref
 }

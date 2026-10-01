@@ -811,3 +811,8 @@ table.tbl tr:nth-child(even) td{background:#fafcff}
   .legal{max-width:none}
 }
 @media(max-width:560px){ .legal-side ol{columns:1} }
+
+
+/* Section jumps must clear the sticky header â€” the id sits on the <section>,
+   so the margin has to be declared there, not on the heading. */
+.legal section[id]{scroll-margin-top:104px}
