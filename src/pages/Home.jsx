@@ -86,13 +86,17 @@ export default function Home() {
             {packages.map((p, i) => (
               <Reveal key={p.id} delay={i * 0.05}>
                 <Card hover className={'card tint-' + (p.id === 'certification-plus' ? 'crimson' : 'brand')}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div className="card-head">
                     <Badge tone={p.tone}>Step {p.order}</Badge>
-                    <span className="xs muted">{p.hours}</span>
+                    <span className="xs muted cpd">{p.hours}</span>
                   </div>
                   <h3 style={{ marginTop: 14 }}>{p.name}</h3>
                   <p className="sm">{p.summary}</p>
-                  <ul className="list">{p.contents.map(c => <li key={c}>{c}</li>)}</ul>
+                  <ul className="tick">{p.contents.map(c => <li key={c}>{c}</li>)}</ul>
+                  <div className="card-foot">
+                    <span className="cpd">{p.hours}</span>
+                    <span>· 60-day access from activation</span>
+                  </div>
                 </Card>
               </Reveal>
             ))}
